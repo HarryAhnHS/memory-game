@@ -1,13 +1,14 @@
 import './App.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Header from './components/Header'
+
+
 import Game from './components/Game'
 
 function App() {
 
   return (
     <>
-      <Header />
       <Game/>
     </>
   )
