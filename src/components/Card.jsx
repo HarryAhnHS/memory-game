@@ -1,4 +1,4 @@
-function Card({pokemon, pokemons, setPokemons, loading, playerScore, setPlayerScore}) {
+function Card({pokemon, pokemons, setPokemons, playerScore, setPlayerScore}) {
 
     const handleClick = () => {
         if (pokemon.isChosen) {
@@ -25,18 +25,10 @@ function Card({pokemon, pokemons, setPokemons, loading, playerScore, setPlayerSc
         <div className="pokecard p-3 rounded m-3" 
         style={{backgroundColor:'lightgray', width:'30%', height: '150px', cursor:'pointer'}}
         onClick={handleClick}>
-            {loading
-            ?
-                <p>Loading...</p>
-            :
                 <>
                     <img src={pokemon.icon}></img>
                     <p className="text-dark">{pokemon.name}</p>
                 </>
-                
-                
-            }
-
         </div>
     )
 }

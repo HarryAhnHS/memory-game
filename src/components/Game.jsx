@@ -7,7 +7,7 @@ function Game() {
     const [playerScore, setPlayerScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     async function getPokemon(id) {
         try{
@@ -30,7 +30,6 @@ function Game() {
         }
     }
     async function fetchPokemons() {
-        setLoading(true);
         let indices = [...Array(300).keys()];
         let selected = [];
 
@@ -39,8 +38,13 @@ function Game() {
             selected.push(indices[randomIdx]);
             indices.splice(randomIdx, 1);
         }
-        setPokemons(await Promise.all(selected.map(getPokemon)));
-        setLoading(false);
+
+        try {
+            setPokemons(await Promise.all(selected.map(getPokemon)))
+        }
+        finally {
+            setLoading(false);
+        }
     }
 
     // At initial mount - setPokemons to random list of 9 pokemons
@@ -82,11 +86,16 @@ function Game() {
             <div className='text-danger'>Don&#39;t click on the same pokemon twice</div>
             
             <div className="d-flex flex-wrap justify-content-center">
-                {pokemons.map((pokemon) => {
-                    return (
-                        <Card pokemon={pokemon} pokemons={pokemons} setPokemons={setPokemons} shufflePokemons={shufflePokemons} loading={loading} playerScore = {playerScore} setPlayerScore ={setPlayerScore} key={pokemon.id}/>
-                    )
-                })}
+                {loading
+                ? 
+                    <p>Loading assets...</p>
+                :
+                    pokemons.map((pokemon) => {
+                        return (
+                            <Card pokemon={pokemon} pokemons={pokemons} setPokemons={setPokemons} shufflePokemons={shufflePokemons} playerScore = {playerScore} setPlayerScore ={setPlayerScore} key={pokemon.id}/>
+                        )
+                    })
+            }
             </div>
         </>
     )
