@@ -3,7 +3,6 @@ import Card from './Card.jsx'
 import {useEffect, useState} from 'react';
 
 function Game() {
-
     const [pokemons, setPokemons] = useState([]);
     const [playerScore, setPlayerScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
@@ -13,13 +12,18 @@ function Game() {
     async function getPokemon(id) {
         try{
             const call = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-            const result = await call.json();
-            return ({
-                name: result.name,
-                icon: result.sprites.front_default,                    
-                id: id,
-                isChosen: false,
-            })
+            if (call.status >= 400) {
+                throw new Error("server error");
+            }
+            else {
+                const result = await call.json();
+                return ({
+                    name: result.name,
+                    icon: result.sprites.front_default,                    
+                    id: id,
+                    isChosen: false,
+                })
+            }            
         }
         catch(err) {
             console.log(err);
@@ -27,11 +31,10 @@ function Game() {
     }
     async function fetchPokemons() {
         setLoading(true);
-        let indices = [...Array(200).keys()];
+        let indices = [...Array(300).keys()];
         let selected = [];
 
         while (selected.length < 9) {
-            console.log(randomIdx);
             const randomIdx = Math.floor(Math.random() * indices.length);
             selected.push(indices[randomIdx]);
             indices.splice(randomIdx, 1);
@@ -69,20 +72,14 @@ function Game() {
         setPokemons(array);
     }
 
-    function resetGame() {
-        fetchPokemons();
-        setPlayerScore(0);
-        setHighScore(0);
-    }
-    
-    console.log(pokemons);
     return (
         <>
-            <div>
-                <div>Current score: {playerScore}</div>
-                <div>High score: {highScore}</div>
+            <div className='d-flex flex-column align-items-start'>
+                <div className='m-1'><span className='fw-bold'>Current score: </span> {playerScore}</div>
+                <div className='m-1'><span className='fw-bold'>High score: </span>{highScore}</div>
             </div>
-            <button className='btn btn-primary' onClick={resetGame} disabled={loading}>Reset Game</button>
+
+            <div className='text-danger'>Don&#39;t click on the same pokemon twice</div>
             
             <div className="d-flex flex-wrap justify-content-center">
                 {pokemons.map((pokemon) => {
